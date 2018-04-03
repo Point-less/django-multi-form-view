@@ -46,7 +46,7 @@ class MultiFormView(FormView):
         """
         Add forms into the context dictionary.
         """
-        context = {}
+        context = super(MultiFormView, self).get_context_data(**kwargs)
         if 'forms' not in kwargs:
             context['forms'] = self.get_forms()
         else:
