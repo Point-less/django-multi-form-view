@@ -95,10 +95,18 @@ class MultiFormView(FormView):
         Uses `are_forms_valid()` to call either `forms_valid()` or * `forms_invalid()`.
         """
         forms = self.get_forms()
-        if self.are_forms_valid(forms):
-            return self.forms_valid(forms)
+        submited_form_names = self.request.POST.get('form_name', [])
+        if submited_form_names:
+            submited_forms = {name: form for name, form in forms.iteritems() if name in submited_form_names}
         else:
-            return self.forms_invalid(forms)
+            submited_forms = forms
+        
+        if self.are_forms_valid(submited_forms):
+            return self.forms_valid(submited_forms)
+        else:
+            new_forms = self.get_forms()
+            new_forms.update(submited_forms)
+            return self.forms_invalid(new_forms)
 
 
 class MultiModelFormView(MultiFormView):
